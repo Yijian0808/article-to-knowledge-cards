@@ -1,0 +1,44 @@
+# make-knowledge-cards · OpenAI 平台 Agent 配置
+# instructions 指向本 Skill 的规则文件，运行时把 SKILL.md 全文作为 system 指令注入
+
+name: make-knowledge-cards
+display_name: 知识卡片生成
+description: 把用户粘贴的文章或本地 Markdown/TXT 文件提炼成 5-8 张结构化知识卡片
+version: 0.1.0
+
+model:
+  provider: openai
+  name: gpt-4o-mini
+  temperature: 0.2
+  max_output_tokens: 2048
+
+instructions: ../SKILL.md
+
+input:
+  accepted:
+    - text/plain        # 对话中直接粘贴的正文、本地 .txt 文件
+    - text/markdown     # 本地 .md 文件
+  rejected:
+    - text/html         # 网页抓取 / URL
+    - application/pdf
+    - image/*
+    - audio/*
+
+output:
+  format: text/markdown
+  shape: knowledge-cards
+  target_cards: 5-8     # 原文知识点不足时按实际数量输出，不硬凑
+  max_cards: 8
+
+capabilities:
+  web_browsing: false
+  file_read: true
+  file_write: false
+  gui: false
+  anki_export: false
+
+interface:
+  default_prompt: 把下面这篇文章整理成知识卡片
+  examples:
+    - 用 make-knowledge-cards 把这篇文章提炼成知识卡片
+    - 把 learn/notes.md 转成 5 到 8 张知识卡片
